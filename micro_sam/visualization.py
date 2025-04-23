@@ -11,7 +11,7 @@ from nifty.tools import blocking
 from elf.segmentation.embeddings import embedding_pca
 
 from .util import ImageEmbeddings
-
+import z5py 
 
 #
 # PCA visualization for the image embeddings

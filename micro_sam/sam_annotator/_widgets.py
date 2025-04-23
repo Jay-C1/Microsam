@@ -63,7 +63,7 @@ class _WidgetBase(QtWidgets.QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setLayout(QtWidgets.QVBoxLayout())
-
+        
     def _add_boolean_param(self, name, value, title=None, tooltip=None):
         checkbox = QtWidgets.QCheckBox(name if title is None else title)
         checkbox.setChecked(value)
@@ -1151,7 +1151,7 @@ def _process_tiling_inputs(tile_shape_x, tile_shape_y, halo_x, halo_y):
 class EmbeddingWidget(_WidgetBase):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
-
+        self._committed_loaded = False   # 避免重复加载
         # Create a nested layout for the sections.
         # Section 1: Image and Model.
         section1_layout = QtWidgets.QHBoxLayout()
@@ -1198,6 +1198,64 @@ class EmbeddingWidget(_WidgetBase):
         image_section.addWidget(self.image_selection.native)
 
         return image_section
+        # ------------------------------------------------------------
+    # 如果 embeddings_save_path 里有 committed_objects，就加载到 napari
+    # ------------------------------------------------------------
+    # -------------------------------------------------------------------
+    #  放进 EmbeddingWidget 类里，替掉旧的 _maybe_load_committed_objects
+    # -------------------------------------------------------------------
+    def _maybe_load_committed_objects(self):
+        if getattr(self, "_committed_loaded", False):
+            return                          # 已经加载过
+
+        if not self.embeddings_save_path:
+            return
+        path = str(self.embeddings_save_path)
+        if not os.path.isdir(path):
+            return
+
+        # ---- 读 committed_objects ----
+        try:
+            try:
+                f = z5py.ZarrFile(path, "r")
+            except Exception:
+                f = zarr.open(path, mode="r")
+        except Exception:
+            return
+        if "committed_objects" not in f:
+            return
+
+        arr = f["committed_objects"][:]
+        if arr.max() == 0:
+            # 真有 0 才跳过；否则直接贴
+            return
+
+        import napari
+        v = napari.current_viewer()
+        if v is None:
+            return
+
+        # ---- 用自己专属的 layer 名 ----
+        lname = "loaded_committed_objects"
+        if lname in v.layers:
+            lab = v.layers[lname]
+            lab.data = arr                  # 覆盖旧数据
+        else:
+            lab = v.add_labels(arr, name=lname)
+
+        # 可视化参数
+        if hasattr(lab, "show_selected"):
+            lab.show_selected = False
+        if hasattr(lab, "show_selected_label"):
+            lab.show_selected_label = False
+
+        v.layers.move(v.layers.index(lab), len(v.layers) - 1)  # 放到最顶
+        lab.refresh()
+
+        self._committed_loaded = True
+        print("[DEBUG] committed_objects 写入 loaded_committed_objects 完成")
+
+
 
     def _update_model(self, state):
         _model_type = state.predictor.model_type if self.custom_weights else self.model_type
@@ -1441,6 +1499,7 @@ class EmbeddingWidget(_WidgetBase):
 
         compute_image_embedding()
         self._update_model(state)
+        self._maybe_load_committed_objects()
         # worker = compute_image_embedding()
         # worker.returned.connect(self._update_model)
         # worker.start()

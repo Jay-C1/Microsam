@@ -15,6 +15,7 @@ setup.cfg
 ./micro_sam/precompute_state.py
 ./micro_sam/prompt_based_segmentation.py
 ./micro_sam/prompt_generators.py
+./micro_sam/test.py
 ./micro_sam/util.py
 ./micro_sam/visualization.py
 ./micro_sam/models/__init__.py
@@ -44,6 +45,7 @@ micro_sam/napari.yaml
 micro_sam/precompute_state.py
 micro_sam/prompt_based_segmentation.py
 micro_sam/prompt_generators.py
+micro_sam/test.py
 micro_sam/util.py
 micro_sam/visualization.py
 micro_sam.egg-info/PKG-INFO
