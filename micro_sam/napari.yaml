@@ -1,5 +1,5 @@
 name: micro-sam
-display_name: Comp5703-Napariplugin
+display_name: CS75-SAM-plugin
 categories: ["Segmentation", "Annotation"]
 
 contributions:
