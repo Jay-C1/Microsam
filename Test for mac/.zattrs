@@ -1,0 +1,17 @@
+{
+    "data_signature": "31a9930a85e5b03483a82e21817d1c15d3dd0b34",
+    "halo": [
+        32,
+        32
+    ],
+    "input_size": null,
+    "micro_sam_version": "1.0",
+    "model_hash": "xxh128:8fd5806be3c3ba213e19a709d6d1495f",
+    "model_name": "vit_b_lm",
+    "model_type": "vit_b",
+    "original_size": null,
+    "tile_shape": [
+        256,
+        256
+    ]
+}

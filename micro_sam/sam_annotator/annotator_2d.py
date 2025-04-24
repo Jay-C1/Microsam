@@ -22,21 +22,18 @@ class Annotator2d(_AnnotatorBase):
     def _get_widgets(self):
         state = AnnotatorState()
 
-        # --- prompt 下拉框 ---
+        # --- prompt  ---
         prompt_menu = create_prompt_menu(self._point_prompt_layer,
                                         ["positive", "negative"])
 
-        # --- Segment Object 按钮（含 batched 复选框）---
         segment_widget = widgets.segment()
 
-        # ① 去掉它自带的 “segment” 标签
-        segment_widget.label = ""          # ← 关键一行
+        segment_widget.label = ""         
 
-        # ② 让两行 label 占用同样宽度（可调）
         prompt_menu.label_width  = 70
         segment_widget.label_width = 70
 
-        # ③ 组合到一个竖直布局里
+        # ③ 
         segment_block = Container(layout="vertical",
                                 widgets=[prompt_menu, segment_widget])
 
@@ -48,7 +45,7 @@ class Annotator2d(_AnnotatorBase):
 
         return {
             "autosegment": autoseg,
-            "segment":     segment_block,   # prompt+WSbatched+button 一整块
+            "segment":     segment_block,   # prompt+WSbatched+button 
             "commit":      widgets.commit(),
             "clear":       widgets.clear(),
         }

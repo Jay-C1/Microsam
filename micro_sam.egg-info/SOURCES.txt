@@ -48,6 +48,11 @@ micro_sam/prompt_generators.py
 micro_sam/test.py
 micro_sam/util.py
 micro_sam/visualization.py
+micro_sam.egg-info/._PKG-INFO
+micro_sam.egg-info/._SOURCES.txt
+micro_sam.egg-info/._dependency_links.txt
+micro_sam.egg-info/._entry_points.txt
+micro_sam.egg-info/._top_level.txt
 micro_sam.egg-info/PKG-INFO
 micro_sam.egg-info/SOURCES.txt
 micro_sam.egg-info/dependency_links.txt

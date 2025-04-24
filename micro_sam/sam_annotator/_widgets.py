@@ -1006,7 +1006,6 @@ def segment(viewer: "napari.viewer.Viewer", batched: bool = False) -> None:
     viewer.layers["current_object"].data = seg
     viewer.layers["current_object"].refresh()
     from magicgui.widgets import Container
-    from . import util as vutil  # 确保导入这个
 
     def segment_with_prompt(viewer: "napari.viewer.Viewer") -> Container:
         from .util import AnnotatorState
@@ -1198,15 +1197,10 @@ class EmbeddingWidget(_WidgetBase):
         image_section.addWidget(self.image_selection.native)
 
         return image_section
-        # ------------------------------------------------------------
-    # 如果 embeddings_save_path 里有 committed_objects，就加载到 napari
-    # ------------------------------------------------------------
-    # -------------------------------------------------------------------
-    #  放进 EmbeddingWidget 类里，替掉旧的 _maybe_load_committed_objects
-    # -------------------------------------------------------------------
+
     def _maybe_load_committed_objects(self):
         if getattr(self, "_committed_loaded", False):
-            return                          # 已经加载过
+            return                        
 
         if not self.embeddings_save_path:
             return
@@ -1227,7 +1221,6 @@ class EmbeddingWidget(_WidgetBase):
 
         arr = f["committed_objects"][:]
         if arr.max() == 0:
-            # 真有 0 才跳过；否则直接贴
             return
 
         import napari
@@ -1235,11 +1228,11 @@ class EmbeddingWidget(_WidgetBase):
         if v is None:
             return
 
-        # ---- 用自己专属的 layer 名 ----
+        # ----  layer ----
         lname = "loaded_committed_objects"
         if lname in v.layers:
             lab = v.layers[lname]
-            lab.data = arr                  # 覆盖旧数据
+            lab.data = arr                  # 覆盖
         else:
             lab = v.add_labels(arr, name=lname)
 
@@ -1249,7 +1242,7 @@ class EmbeddingWidget(_WidgetBase):
         if hasattr(lab, "show_selected_label"):
             lab.show_selected_label = False
 
-        v.layers.move(v.layers.index(lab), len(v.layers) - 1)  # 放到最顶
+        v.layers.move(v.layers.index(lab), len(v.layers) - 1) 
         lab.refresh()
 
         self._committed_loaded = True
